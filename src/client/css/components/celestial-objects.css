@@ -1,0 +1,64 @@
+.celestial-object {
+    position: absolute;
+    transition: all 0.5s ease;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.planet {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.mercury { 
+    background: linear-gradient(45deg, #7a7a7a, #b8b8b8);
+    width: 12px;
+    height: 12px;
+}
+
+.venus { 
+    background: linear-gradient(45deg, #e6b88a, #c17f59);
+    width: 18px;
+    height: 18px;
+}
+
+.mars { 
+    background: linear-gradient(45deg, #ff6b6b, #dc4242);
+    width: 15px;
+    height: 15px;
+}
+
+.jupiter { 
+    background: linear-gradient(45deg, #e8ae68, #c17f59);
+    width: 30px;
+    height: 30px;
+}
+
+.saturn { 
+    background: linear-gradient(45deg, #e6c88a, #b8935a);
+    width: 25px;
+    height: 25px;
+    position: relative;
+}
+
+.uranus { 
+    background: linear-gradient(45deg, #a1d6e2, #5cb3c1);
+    width: 20px;
+    height: 20px;
+}
+
+.neptune { 
+    background: linear-gradient(45deg, #4688d6, #1c3d82);
+    width: 20px;
+    height: 20px;
+}
+
+.moon { 
+    width: 35px;
+    height: 35px;
+    background: radial-gradient(circle at 35% 35%, #fff 0%, #f2f2f2 50%, #ccc 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}

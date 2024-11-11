@@ -1,0 +1,20 @@
+# docker-compose.yml
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PYTHON_SERVICE_URL=http://python-service:8000
+      - NODE_ENV=production
+    volumes:
+      - ./src:/usr/src/app/src
+    depends_on:
+      - python-service
+
+  python-service:
+    build:
+      context: ./celestial_service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
