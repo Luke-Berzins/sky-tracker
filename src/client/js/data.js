@@ -1,4 +1,4 @@
-// public/js/data.js
+// src/client/js/data.js
 async function fetchData() {
     try {
         const response = await fetch('/api/celestial-data');
@@ -112,7 +112,6 @@ function retryFetch() {
     fetchData();
 }
 
-// Make retryFetch available globally
 window.retryFetch = retryFetch;
 
 // Initial load

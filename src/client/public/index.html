@@ -3,37 +3,19 @@
 <head>
     <title>Sky Tracker</title>
     <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components/sky.css">
-    <link rel="stylesheet" href="/css/components/celestial-objects.css">
-    <link rel="stylesheet" href="/css/components/overlays.css">
-    <link rel="stylesheet" href="/css/components/navigation.css">
+    <link rel="stylesheet" href="/css/components/sky-view.css">
+   
 </head>
 <body>
     <div class="sky-container">
         <div class="stars"></div>
-        <div class="altitude-grid"></div>
-        <div class="horizon-line"></div>
         <div id="celestial-objects"></div>
-        <div class="direction-labels">
-            <span>NW</span>
-            <span>N</span>
-            <span>NE</span>
-        </div>
-        <div class="compass">
-            <div class="compass-needle"></div>
-            <div class="compass-marker" style="top: 10px">N</div>
-            <div class="compass-marker" style="right: 10px">E</div>
-            <div class="compass-marker" style="bottom: 10px">S</div>
-            <div class="compass-marker" style="left: 10px">W</div>
-        </div>
-        <div class="data-overlay">
-            <h2>Currently Visible</h2>
-            <div id="visible-list"></div>
-        </div>
+        <div id="visible-list"></div>
+        <div class="ground"></div>
         <nav class="nav-links">
             <a href="/data" class="nav-link">View All Data</a>
         </nav>
     </div>
-    <script src="/js/index.js" type="module"></script>
+    <script src="/js/index.js"></script>
 </body>
 </html>

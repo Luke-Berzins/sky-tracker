@@ -1,0 +1,74 @@
+.planet-container {
+    min-height: 100vh;
+    padding: 2rem;
+    background: linear-gradient(to bottom, #0c0c1f, #1a1a3a);
+}
+
+.planet-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #2a2a4a;
+}
+
+.planet-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 20px currentColor;
+}
+
+.planet-title {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #ffd700;
+}
+
+.planet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: #1a1a3a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h2 {
+    margin: 0 0 1rem 0;
+    color: #ffd700;
+    font-size: 1.25rem;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #2a2a4a;
+}
+
+.visibility-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+}
+
+.visibility-status.visible {
+    background: #1a4a1a;
+    color: #90ee90;
+}
+
+.visibility-status.not-visible {
+    background: #4a1a1a;
+    color: #ee9090;
+}

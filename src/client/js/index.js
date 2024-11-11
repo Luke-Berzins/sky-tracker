@@ -1,6 +1,7 @@
-// src/client/js/index.js
-const createStars = () => {
+function createStars() {
     const stars = document.querySelector('.stars');
+    if (!stars) return;
+
     for (let i = 0; i < 200; i++) {
         const star = document.createElement('div');
         star.className = 'star';
@@ -11,114 +12,127 @@ const createStars = () => {
         star.style.animationDelay = Math.random() * 3 + 's';
         stars.appendChild(star);
     }
-};
+}
 
-const createMeteor = () => {
-    const meteor = document.createElement('div');
-    meteor.className = 'meteor';
-    meteor.style.top = Math.random() * 50 + '%';
-    meteor.style.left = '100%';
-    meteor.style.animation = 'meteor 1s linear forwards';
-    document.querySelector('.sky-container').appendChild(meteor);
-    setTimeout(() => meteor.remove(), 1000);
-};
+async function fetchData() {
+    try {
+        const response = await fetch('/api/celestial-data');
+        if (!response.ok) {
+            throw new Error(`Server error: ${await response.text()}`);
+        }
+        const data = await response.json();
+        console.log('Fetched data:', data); // Debug log
+        renderSkyObjects(data);
+    } catch (error) {
+        console.error('Error:', error);
+        const container = document.getElementById('celestial-objects');
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message">
+                    <h2>Error loading celestial data</h2>
+                    <p>${error.message}</p>
+                    <button onclick="retryFetch()">Retry</button>
+                </div>
+            `;
+        }
+    }
+}
 
-const getCompassDirection = (azimuth) => {
+function getCompassDirection(azimuth) {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const index = Math.round(((azimuth %= 360) < 0 ? azimuth + 360 : azimuth) / 45) % 8;
     return directions[index];
-};
-
-const positionObject = (altitude, azimuth) => {
-    const normalizedAzimuth = ((azimuth + 360) % 360);
-    if (normalizedAzimuth <= 90 || normalizedAzimuth >= 270) {
-        let x;
-        if (normalizedAzimuth >= 270) {
-            x = ((normalizedAzimuth - 360) + 90) / 180;
-        } else {
-            x = azimuth / 180;
-        }
-        const y = 1 - ((altitude + 90) / 180);
-        return { x, y };
-    }
-    return null;
-};
-
-async function fetchCelestialData() {
-    const response = await fetch('/api/celestial-data');
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Server error: ${errorData.details || errorData.error || 'Unknown error'}`);
-    }
-    return response.json();
 }
 
-async function updateSky() {
-    try {
-        const data = await fetchCelestialData();
-        renderVisibleObjects(data);
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('celestial-objects').innerHTML = `
-            <div class="error-message">
-                <h2>Error loading celestial data</h2>
-                <p>${error.message}</p>
-                <button onclick="window.retryFetch()">Retry</button>
-            </div>
-        `;
-    }
-}
-
-function renderVisibleObjects(data) {
-    const visibleObjects = Object.values(data).filter(obj => obj.visibility.isVisible);
+function renderSkyObjects(data) {
+    const container = document.getElementById('celestial-objects');
+    const visibleList = document.getElementById('visible-list');
     
-    if (visibleObjects.length === 0) {
-        document.getElementById('celestial-objects').innerHTML = `
-            <div class="no-visible">
-                <h2>No Objects Currently Visible</h2>
-                <p>Check back later when celestial objects are above the horizon.</p>
-            </div>
-        `;
+    if (!container || !visibleList) {
+        console.error('Required DOM elements not found');
         return;
     }
 
-    const objectsHtml = visibleObjects.map(object => {
+    // Clear existing content
+    container.innerHTML = '';
+    visibleList.innerHTML = '<h2>Currently Visible</h2>';
+
+    Object.values(data).forEach(object => {
         const currentPosition = object.daily_path[0];
-        if (!currentPosition) return '';
+        if (!currentPosition) return;
 
-        const pos = positionObject(currentPosition.altitude, currentPosition.azimuth);
-        if (!pos) return '';
+        // Position the object
+        const objectEl = document.createElement('div');
+        objectEl.className = `celestial-object ${object.type.toLowerCase()} ${object.name.toLowerCase()}`;
+        
+        // Calculate position using altitude and azimuth
+        const altitude = currentPosition.altitude;
+        const azimuth = currentPosition.azimuth;
+        
+        // Simple positioning (we'll refine this later)
+        objectEl.style.left = `${(azimuth / 360) * 100}%`;
+        objectEl.style.top = `${100 - ((altitude + 90) / 180) * 100}%`;
 
-        return `
-            <div class="celestial-object ${object.type.toLowerCase()} ${object.name.toLowerCase()}"
-                 style="left: ${pos.x * 100}%; top: ${pos.y * 100}%">
-                <div class="object-info">
-                    <h3>${object.name}</h3>
-                    <p>${object.visibility.message}</p>
-                    <p>Altitude: ${currentPosition.altitude.toFixed(1)}°</p>
-                    <p>Azimuth: ${currentPosition.azimuth.toFixed(1)}° (${getCompassDirection(currentPosition.azimuth)})</p>
-                </div>
+        // Make object clickable if it's a planet
+        if (object.type.toLowerCase() === 'planet') {
+            objectEl.style.cursor = 'pointer';
+            objectEl.addEventListener('click', () => {
+                window.location.href = `/planet/${object.name.toLowerCase()}`;
+            });
+        }
+
+        // Add info tooltip
+        const tooltipEl = document.createElement('div');
+        tooltipEl.className = 'object-tooltip';
+        tooltipEl.innerHTML = `
+            <h3>${object.name}</h3>
+            <div class="tooltip-content">
+                <p>${object.visibility.message}</p>
+                <p>Altitude: ${altitude.toFixed(1)}°</p>
+                <p>Azimuth: ${azimuth.toFixed(1)}° (${getCompassDirection(azimuth)})</p>
+                ${object.type.toLowerCase() === 'planet' ? '<p class="click-hint">Click for details →</p>' : ''}
             </div>
         `;
-    }).join('');
-    
-    document.getElementById('celestial-objects').innerHTML = objectsHtml;
+        objectEl.appendChild(tooltipEl);
+        container.appendChild(objectEl);
+
+        // Add to visible list if visible
+        if (object.visibility.isVisible) {
+            const listItem = document.createElement('div');
+            listItem.className = 'visible-item';
+            if (object.type.toLowerCase() === 'planet') {
+                listItem.style.cursor = 'pointer';
+                listItem.addEventListener('click', () => {
+                    window.location.href = `/planet/${object.name.toLowerCase()}`;
+                });
+            }
+            listItem.innerHTML = `
+                <span class="object-name">${object.name}</span>
+                <span class="object-details">
+                    Alt: ${altitude.toFixed(1)}° 
+                    Az: ${azimuth.toFixed(1)}°
+                </span>
+            `;
+            visibleList.appendChild(listItem);
+        }
+    });
 }
 
 // Initialize
-createStars();
-updateSky();
-
-// Update every minute
-setInterval(updateSky, 60000);
-
-// Create meteors randomly
-setInterval(() => {
-    if (Math.random() < 0.3) createMeteor();
-}, 2000);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Initializing sky view...'); // Debug log
+    createStars();
+    fetchData();
+    // Update every minute
+    setInterval(fetchData, 60000);
+});
 
 // Make retry function globally available
 window.retryFetch = () => {
-    document.getElementById('celestial-objects').innerHTML = '<p>Retrying...</p>';
-    updateSky();
+    console.log('Retrying data fetch...'); // Debug log
+    const container = document.getElementById('celestial-objects');
+    if (container) {
+        container.innerHTML = '<p>Retrying...</p>';
+    }
+    fetchData();
 };

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Planet Details - Sky Tracker</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components/planet-detail.css">
+    <link rel="stylesheet" href="/css/components/sky.css">
+</head>
+<body>
+    <div class="planet-container">
+        <div class="nav-buttons">
+            <a href="/" class="nav-button">← Back to Sky View</a>
+            <a href="/data" class="nav-button">View All Data</a>
+        </div>
+
+        <div class="planet-header">
+            <div class="planet-icon" id="planetIcon"></div>
+            <div>
+                <h1 class="planet-title" id="planetName"></h1>
+                <div id="visibilityStatus"></div>
+            </div>
+        </div>
+
+        <div class="planet-grid">
+            <div class="info-card">
+                <h2>Current Position</h2>
+                <div id="positionData"></div>
+            </div>
+
+            <div class="info-card">
+                <h2>Visibility</h2>
+                <div id="visibilityData"></div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>Daily Path</h2>
+            <div class="path-visualization" id="pathVisualization"></div>
+        </div>
+    </div>
+
+    <div class="ground"></div>
+
+    <script src="/js/utils/coordinates.js"></script>
+    <script src="/js/utils/formatting.js"></script>
+    <script src="/js/visualization/celestialObjects.js"></script>
+    <script src="/js/planet.js"></script>
+    
+</body>
+</html>

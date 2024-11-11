@@ -3,6 +3,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import apiRoutes from './routes/api.js';
+const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,11 @@ app.get('/data', (req, res) => {
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/public/index.html'));
+});
+
+// Planet detail view
+router.get('/planet/:name', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../client/public/planet.html'));
 });
 
 const PORT = process.env.PORT || 3000;

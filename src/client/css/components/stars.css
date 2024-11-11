@@ -1,0 +1,85 @@
+/* src/client/css/components/stars.css */
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px white;
+}
+
+.star::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.6;
+}
+
+.constellation-line {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1px;
+    stroke-dasharray: 4 2;
+}
+
+.constellation-group:hover .constellation-line {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2px;
+}
+
+/* Star color variations based on temperature */
+.star.blue {
+    background: #A0D8EF;
+    box-shadow: 0 0 8px #A0D8EF;
+}
+
+.star.white {
+    background: #FFFFFF;
+    box-shadow: 0 0 8px #FFFFFF;
+}
+
+.star.yellow {
+    background: #FFE87C;
+    box-shadow: 0 0 8px #FFE87C;
+}
+
+.star.orange {
+    background: #FFB347;
+    box-shadow: 0 0 8px #FFB347;
+}
+
+.star.red {
+    background: #FF6B6B;
+    box-shadow: 0 0 8px #FF6B6B;
+}
+
+/* Enhanced tooltip for stars */
+.star .object-tooltip {
+    width: 250px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.star .object-tooltip h3 {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.visible-constellation {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+}
+
+.constellation-name {
+    font-weight: bold;
+    color: #00fff5;
+    margin-bottom: 5px;
+}
