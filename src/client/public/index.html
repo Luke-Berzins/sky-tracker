@@ -3,18 +3,27 @@
 <head>
     <title>Sky Tracker</title>
     <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/components/sky-view.css">
-   
+    <link rel="stylesheet" href="/css/sky-view.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="sky-container">
+        <header class="site-header">
+            <h1 class="site-title">Tonight above Cambridge</h1>
+            <nav class="nav-links">
+                <a href="/data" class="view-all-btn">View All Data</a>
+            </nav>
+        </header>
+        <div class="horizon-container">
+            <div class="horizon-gradient"></div>
+            <div class="horizon-image"></div>
+        </div>
         <div class="stars"></div>
         <div id="celestial-objects"></div>
         <div id="visible-list"></div>
         <div class="ground"></div>
-        <nav class="nav-links">
-            <a href="/data" class="nav-link">View All Data</a>
-        </nav>
     </div>
     <script src="/js/index.js"></script>
 </body>

@@ -1,0 +1,244 @@
+/* src/client/css/components/sky-view.css */
+.sky-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to bottom, 
+        #0a192f 0%,
+        #152a4d 75%,
+        rgba(21, 42, 77, 0.5) 100%
+    );
+    overflow: hidden;
+}
+
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+.celestial-object {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.object-tooltip {
+    display: none;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #00fff5;
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    width: 200px;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.celestial-object:hover .object-tooltip {
+    display: block;
+}
+
+/* Basic planet styles */
+.planet {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.mercury { background: #7a7a7a; width: 12px; height: 12px; }
+.venus { background: #e6b88a; width: 18px; height: 18px; }
+.mars { background: #ff6b6b; width: 15px; height: 15px; }
+.jupiter { background: #e8ae68; width: 30px; height: 30px; }
+.saturn { background: #e6c88a; width: 25px; height: 25px; }
+.uranus { background: #a1d6e2; width: 20px; height: 20px; }
+.neptune { background: #4688d6; width: 20px; height: 20px; }
+.moon { 
+    width: 35px; 
+    height: 35px; 
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+#visible-list {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    max-width: 300px;
+}
+
+.visible-item {
+    margin: 8px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.object-name {
+    color: #00fff5;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.error-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(244, 67, 54, 0.1);
+    border: 2px solid #f44336;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+
+.error-message button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+
+.horizon-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    z-index: 1;
+}
+
+.horizon-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/horizon.png');
+    background-position: bottom center;
+    background-repeat: repeat-x;
+    background-size: cover;
+}
+
+/* Add star fade near horizon */
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 1) 70%,
+        rgba(255, 255, 255, 0.3) 85%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 1) 70%,
+        rgba(255, 255, 255, 0.3) 85%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
+/* Enhance visibility of celestial objects */
+.celestial-object {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 10;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+#visible-list {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    max-width: 300px;
+    z-index: 100;
+}
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.site-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.view-all-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.view-all-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.view-all-btn:active {
+    transform: translateY(0px);
+}
+
+/* Update visible-list positioning to work with header */
+#visible-list {
+    position: fixed;
+    top: 100px; /* Adjust based on your header height */
+    left: 2rem;
+}
