@@ -39,21 +39,28 @@ async def get_daily_positions() -> Dict[str, CelestialObject]:
         
         # Calculate positions for all objects
         planets = calculator.get_planets_data()
-        logger.info(f"Calculated positions for {len(planets)} planets")
+        logger.info(f"Calculated positions for {len(planets)} visible planets")
         
-        moon = calculator.get_moon_data()
-        logger.info("Calculated moon position")
+        moon_data = calculator.get_moon_data()
+        if moon_data:
+            logger.info("Moon is visible and position calculated")
+        else:
+            logger.info("Moon is below horizon")
         
-        sun = calculator.get_sun_data()
-        logger.info("Calculated sun position")
+        sun_data = calculator.get_sun_data()
+        if sun_data:
+            logger.info("Sun is visible and position calculated")
+        else:
+            logger.info("Sun is below horizon")
         
-        # Combine all data
-        all_objects = {obj.name: obj for obj in planets}
-        all_objects["Moon"] = moon
-        all_objects["Sun"] = sun
+        # Combine all visible objects
+        all_objects = planets  # Start with visible planets dictionary
+        all_objects.update(moon_data)  # Add moon if visible
+        all_objects.update(sun_data)   # Add sun if visible
         
-        logger.info(f"Returning data for {len(all_objects)} celestial objects")
+        logger.info(f"Returning data for {len(all_objects)} visible celestial objects")
         return all_objects
+        
     except Exception as e:
         logger.error(f"Error in get_daily_positions: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
