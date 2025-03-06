@@ -3,12 +3,275 @@
     position: relative;
     width: 100%;
     height: 100vh;
+    overflow: hidden;
+    transition: background 1.5s ease-in-out;
+    z-index: 0; /* Ensure proper stacking context */
+}
+
+/* Default sky (fallback) */
+.sky-container:not(.day-sky):not(.night-sky) {
     background: linear-gradient(to bottom, 
         #0a192f 0%,
         #152a4d 75%,
         rgba(21, 42, 77, 0.5) 100%
     );
+}
+
+/* Night sky - default */
+.night-sky {
+    background: linear-gradient(to bottom, 
+        #0a192f 0%,
+        #152a4d 75%,
+        rgba(21, 42, 77, 0.5) 100%
+    );
+    box-shadow: inset 0 0 100px rgba(0, 30, 60, 0.3);
+}
+
+/* Day sky */
+.day-sky {
+    background: linear-gradient(to bottom, 
+        #87CEEB 0%,
+        #B0E2FF 75%,
+        rgba(176, 226, 255, 0.8) 100%
+    );
+    box-shadow: inset 0 0 100px rgba(255, 255, 255, 0.2);
+}
+
+/* Cloudy weather effect - more cozy mood */
+.cloudy.night-sky {
+    background: linear-gradient(to bottom, 
+        #1a1e2e 0%,
+        #2c3e50 75%,
+        rgba(44, 62, 80, 0.9) 100%
+    );
+    box-shadow: inset 0 0 150px rgba(10, 20, 30, 0.5);
+}
+
+.cloudy.day-sky {
+    background: linear-gradient(to bottom, 
+        #8395a7 0%,
+        #c8d6e5 75%,
+        rgba(200, 214, 229, 0.9) 100%
+    );
+    box-shadow: inset 0 0 150px rgba(180, 200, 220, 0.5);
+}
+
+/* Rainy night - soft blue tint */
+.rainy.night-sky {
+    background: linear-gradient(to bottom, 
+        #1e2a3b 0%,
+        #2c3a52 75%,
+        rgba(44, 58, 82, 0.9) 100%
+    );
+    box-shadow: inset 0 0 200px rgba(30, 60, 90, 0.4);
+}
+
+/* Rainy day - soft gray tint */
+.rainy.day-sky {
+    background: linear-gradient(to bottom, 
+        #6d7f91 0%,
+        #a5b1c2 75%,
+        rgba(165, 177, 194, 0.9) 100%
+    );
+    box-shadow: inset 0 0 200px rgba(100, 120, 140, 0.5);
+}
+
+/* Cloud layers for a more atmospheric effect */
+.cloud-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
     overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.1); /* Lighter cloud base */
+    filter: blur(2px); /* Add some blur for softness */
+}
+
+/* Multiple cloud layers with different speeds and opacities */
+.cloud-layer::before, 
+.cloud-layer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat-x;
+    z-index: 5;  /* Make sure clouds appear above the sky but below interface elements */
+    pointer-events: none;
+}
+
+/* Foreground clouds - more defined and MUCH more visible */
+.cloud-layer::before {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><path fill="white" d="M100,160 Q130,140 150,160 Q180,190 220,170 Q260,150 300,180 Q340,210 380,190 Q420,170 460,200 Q500,230 540,210 L560,250 L80,250 Z M300,100 Q330,80 360,100 Q390,120 420,110 Q450,90 480,110 Q510,130 540,110 L560,140 L280,140 Z"/></svg>');
+    background-size: 600px 400px;
+    opacity: 0.9;  /* Increased opacity */
+    animation: clouds-move-1 80s linear infinite;
+}
+
+/* Background clouds - more diffuse but still visible */
+.cloud-layer::after {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"><path fill="white" d="M50,180 Q100,150 150,170 Q200,190 250,170 Q300,150 350,170 Q400,190 450,170 Q500,150 550,180 Q600,210 650,190 Q700,170 750,190 L780,230 L20,230 Z"/></svg>');
+    background-size: 800px 400px;
+    opacity: 0.7;  /* Increased opacity */
+    animation: clouds-move-2 120s linear infinite;
+}
+
+/* Atmospheric haze - cozy ambient effect */
+.sky-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+/* Day cloudy has warmer glow - lighter haze */
+.cloudy.day-sky::after {
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 250, 230, 0.02) 0%,
+        rgba(255, 240, 220, 0.05) 50%,
+        rgba(255, 230, 210, 0.08) 100%
+    );
+    opacity: 1;
+    animation: ambient-pulse 20s ease-in-out infinite alternate;
+}
+
+/* Night cloudy has cooler glow - lighter haze */
+.cloudy.night-sky::after {
+    background: radial-gradient(
+        circle at center,
+        rgba(230, 240, 255, 0.01) 0%,
+        rgba(220, 230, 255, 0.04) 50%,
+        rgba(210, 220, 255, 0.07) 100%
+    );
+    opacity: 1;
+    animation: ambient-pulse 20s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-pulse {
+    0% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.8;
+    }
+}
+
+/* Different animations for cloud layers - made more dramatic */
+@keyframes clouds-move-1 {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@keyframes clouds-move-2 {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* Cloud layers for a more sophisticated effect */
+.cloud-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Multiple cloud layers with different speeds and opacities */
+.cloud-layer::before, 
+.cloud-layer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat-x;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Foreground clouds - more defined */
+.cloud-layer::before {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"><path fill="white" d="M100,180 Q140,150 180,180 Q220,210 280,180 Q340,150 380,180 Q420,210 480,190 Q540,170 580,190 Q620,210 680,190 L720,250 L80,250 Z M400,120 Q440,90 480,120 Q520,150 560,130 Q600,110 640,140 Q680,170 720,150 L760,190 L380,190 Z"/></svg>');
+    background-size: 800px 400px;
+    opacity: 0.6;
+    animation: clouds-move-1 240s linear infinite; /* Slower clouds */
+    filter: blur(1px);
+}
+
+/* Background clouds - more diffuse */
+.cloud-layer::after {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400"><path fill="white" d="M50,180 Q100,150 150,170 Q200,190 250,170 Q300,150 350,170 Q400,190 450,170 Q500,150 550,180 Q600,210 650,190 Q700,170 750,190 Q800,210 850,190 Q900,170 950,190 L980,230 L20,230 Z"/></svg>');
+    background-size: 1000px 400px;
+    opacity: 0.4;
+    animation: clouds-move-2 360s linear infinite; /* Even slower clouds */
+    filter: blur(2px);
+}
+
+@keyframes clouds-drift {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes clouds-drift-reverse {
+    0% { left: 100%; }
+    100% { left: -100%; }
+}
+
+/* Rain effect */
+.rain-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.raindrop {
+    position: absolute;
+    top: -20px;
+    width: 2px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0.7;
+    animation: rain-fall linear infinite;
+}
+
+@keyframes clouds-move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes rain-fall {
+    0% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(calc(100vh + 20px));
+    }
 }
 
 .stars {
@@ -16,6 +279,12 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+    opacity: 1;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.day-sky .stars {
+    opacity: 0;
 }
 
 .star {
@@ -23,6 +292,13 @@
     background: white;
     border-radius: 50%;
     animation: twinkle 3s infinite;
+}
+
+.meteor {
+    position: absolute;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+    z-index: 5;
+    pointer-events: none;
 }
 
 @keyframes twinkle {
@@ -83,25 +359,27 @@
 
 #visible-list {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 15px;
-    border-radius: 10px;
-    color: white;
-    max-width: 300px;
+    top: var(--spacing-xl);
+    left: var(--spacing-lg);
+    background: rgba(0, 10, 30, 0.8);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    color: var(--color-text);
+    width: var(--panel-width);
+    box-shadow: var(--box-shadow);
+    backdrop-filter: blur(8px);
 }
 
 .visible-item {
-    margin: 8px 0;
-    padding: 5px 0;
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-xs) 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .object-name {
-    color: #00fff5;
-    font-weight: bold;
-    margin-right: 10px;
+    color: var(--color-primary);
+    font-weight: 500;
+    margin-right: var(--spacing-sm);
 }
 
 .error-message {
@@ -109,22 +387,26 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(244, 67, 54, 0.1);
-    border: 2px solid #f44336;
-    border-radius: 10px;
-    padding: 20px;
+    background: rgba(var(--color-danger), 0.1);
+    border: 2px solid var(--color-danger);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
     text-align: center;
-    color: white;
+    color: var(--color-text);
+    width: var(--panel-width-large);
+    box-shadow: var(--box-shadow);
 }
 
 .error-message button {
-    background: #4CAF50;
-    color: white;
+    background: rgb(var(--color-success));
+    color: var(--color-text);
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: var(--spacing-md);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
 }
 
 
@@ -167,6 +449,58 @@
         rgba(255, 255, 255, 0.3) 85%,
         rgba(255, 255, 255, 0) 100%
     );
+    transition: opacity 1.5s ease-in-out;
+}
+
+/* Raindrop animation */
+.raindrop {
+    position: absolute;
+    top: -20px;
+    width: 1px;
+    height: 20px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7));
+    opacity: 0.7;
+    animation: rain-fall linear infinite;
+    filter: blur(0.5px);
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+    border-radius: 50% 50% 0 0;
+}
+
+/* Mist effect for rainy scenes */
+.mist-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(255, 255, 255, 0.06) 50%,
+        rgba(255, 255, 255, 0.03) 100%
+    );
+    opacity: 0.4;
+    z-index: 6;
+    animation: mist-drift 40s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes mist-drift {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100px 100px;
+    }
+}
+
+@keyframes rain-fall {
+    0% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+    100% {
+        transform: translateY(calc(100vh + 20px)) rotate(10deg);
+    }
 }
 
 /* Enhance visibility of celestial objects */
@@ -195,7 +529,7 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: 2rem;
+    padding: var(--spacing-xl);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -206,7 +540,7 @@
     font-family: 'Inter', sans-serif;
     font-weight: 300;
     font-size: 2rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--color-text);
     margin: 0;
     letter-spacing: -0.02em;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -216,10 +550,10 @@
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--color-text);
     text-decoration: none;
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+    border-radius: var(--border-radius-md);
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -236,9 +570,9 @@
     transform: translateY(0px);
 }
 
-/* Update visible-list positioning to work with header */
+/* Ensure consistent positioning of panels */
 #visible-list {
     position: fixed;
-    top: 100px; /* Adjust based on your header height */
-    left: 2rem;
+    top: calc(80px + var(--spacing-lg)); /* Positioned below header with consistent spacing */
+    left: var(--spacing-lg);
 }

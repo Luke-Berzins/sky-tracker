@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tomorrow.io Weather Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0f1525;
+            color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a2035;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #6d9eeb;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #262f4d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: #4a6baf;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .button:hover {
+            background-color: #3a5a9f;
+        }
+        .button.danger {
+            background-color: #e74c3c;
+        }
+        .button.danger:hover {
+            background-color: #c0392b;
+        }
+        pre {
+            background-color: #0c111e;
+            color: #a5d6ff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], 
+        input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #4a6baf;
+            background-color: #161f38;
+            color: #f2f2f2;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .info {
+            color: #6d9eeb;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .loading {
+            display: none;
+            margin-left: 10px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .checkbox-container input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tomorrow.io Weather API Test</h1>
+        
+        <div class="card">
+            <h2>API Configuration</h2>
+            <div class="form-group">
+                <label for="api-key">API Key</label>
+                <input type="text" id="api-key" placeholder="Enter your Tomorrow.io API key">
+                <div class="info">Your API key will be stored in local storage.</div>
+            </div>
+            <button class="button" id="save-key">Save API Key</button>
+            <button class="button danger" id="clear-key">Clear API Key</button>
+        </div>
+        
+        <div class="card">
+            <h2>Test Request</h2>
+            <div class="flex-container">
+                <div class="form-group" style="flex: 1;">
+                    <label for="latitude">Latitude</label>
+                    <input type="number" id="latitude" value="43.397221" step="0.000001">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="longitude">Longitude</label>
+                    <input type="number" id="longitude" value="-80.311386" step="0.000001">
+                </div>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="format-data" checked>
+                <label for="format-data">Format data for application</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="force-refresh">
+                <label for="force-refresh">Force refresh (bypass cache)</label>
+            </div>
+            <button class="button" id="fetch-weather">
+                Fetch Weather Data
+                <span class="loading" id="loading-spinner">Loading...</span>
+            </button>
+        </div>
+        
+        <div class="card">
+            <h2>Response</h2>
+            <pre id="response-output">// Response will appear here</pre>
+        </div>
+    </div>
+
+    <script>
+        // Load saved API key from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('tomorrow-api-key');
+            if (savedKey) {
+                document.getElementById('api-key').value = savedKey;
+            }
+        });
+
+        // Save API key button
+        document.getElementById('save-key').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key').value.trim();
+            if (apiKey) {
+                localStorage.setItem('tomorrow-api-key', apiKey);
+                alert('API key saved to local storage');
+            } else {
+                alert('Please enter an API key');
+            }
+        });
+
+        // Clear API key button
+        document.getElementById('clear-key').addEventListener('click', () => {
+            localStorage.removeItem('tomorrow-api-key');
+            document.getElementById('api-key').value = '';
+            alert('API key cleared from local storage');
+        });
+
+        // Fetch weather data button
+        document.getElementById('fetch-weather').addEventListener('click', async () => {
+            const apiKey = document.getElementById('api-key').value.trim();
+            if (!apiKey) {
+                alert('Please enter an API key');
+                return;
+            }
+
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            const formatData = document.getElementById('format-data').checked;
+            const forceRefresh = document.getElementById('force-refresh').checked;
+            
+            const outputElement = document.getElementById('response-output');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            
+            try {
+                // Show loading spinner
+                loadingSpinner.style.display = 'inline';
+                
+                // Build query parameters
+                const queryParams = new URLSearchParams({
+                    lat: latitude,
+                    long: longitude,
+                    format: formatData,
+                    refresh: forceRefresh,
+                    key: apiKey
+                });
+                
+                // Fetch data from our API
+                const response = await fetch(`/api/tomorrow-weather?${queryParams}`);
+                const data = await response.json();
+                
+                // Pretty-print the JSON with indentation
+                outputElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                outputElement.textContent = `Error: ${error.message}`;
+            } finally {
+                // Hide loading spinner
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,12 +1,63 @@
+:root {
+    /* Color palette */
+    --color-background: #0a192f;
+    --color-primary: #00fff5;
+    --color-secondary: #6d9eeb;
+    --color-text: #fff;
+    --color-text-muted: #aaa;
+    --color-success: 76, 175, 80; /* RGB values for rgba usage */
+    --color-warning: 255, 152, 0; /* RGB values for rgba usage */
+    --color-danger: 244, 67, 54; /* RGB values for rgba usage */
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 30px;
+    
+    /* UI elements */
+    --border-radius-sm: 5px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 10px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    
+    /* Panel sizes */
+    --panel-width: 250px;
+    --panel-width-large: 300px;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    background: #1a1a2e;
-    color: #fff;
+    background: var(--color-background);
+    color: var(--color-text);
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Common UI elements */
+.panel {
+    background-color: rgba(0, 10, 30, 0.8);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    box-shadow: var(--box-shadow);
+    backdrop-filter: blur(8px);
+}
+
+.accent-text {
+    color: var(--color-primary);
+}
+
+.muted-text {
+    color: var(--color-text-muted);
+    font-size: 0.9em;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
 }

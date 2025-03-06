@@ -4,6 +4,7 @@
     <title>Sky Tracker</title>
     <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/sky-view.css">
+    <link rel="stylesheet" href="/css/components/weather.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -16,6 +17,10 @@
                 <a href="/data" class="view-all-btn">View All Data</a>
             </nav>
         </header>
+        
+        <!-- Weather Component -->
+        <div id="weather-container"></div>
+        
         <div class="horizon-container">
             <div class="horizon-gradient"></div>
             <div class="horizon-image"></div>
@@ -25,6 +30,6 @@
         <div id="visible-list"></div>
         <div class="ground"></div>
     </div>
-    <script src="/js/index.js"></script>
+    <script src="/js/index.js" type="module"></script>
 </body>
 </html>

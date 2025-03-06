@@ -31,24 +31,60 @@ class CelestialCalculator:
     def calculate_daily_path(self, body: ephem.Body, date: datetime) -> List[Position]:
         positions = []
         
-        # Calculate 24 hours worth of positions at 15-minute intervals
-        for minutes in range(0, 24 * 60, 15):
-            time = date + timedelta(minutes=minutes)
-            self.observer.date = time
+        # Determine rise and set times to optimize calculations
+        now = date.replace(hour=0, minute=0, second=0, microsecond=0)
+        self.observer.date = now
+        body.compute(self.observer)
+        
+        try:
+            # Try to get rise/set times for today to determine visibility window
+            next_rising = self.observer.next_rising(body).datetime()
+            next_setting = self.observer.next_setting(body).datetime()
             
-            try:
+            # If rise time is after set time, it means the object is already up
+            # In this case, get previous rising time
+            if next_rising > next_setting:
+                self.observer.date = (now - timedelta(hours=24))
                 body.compute(self.observer)
-                alt_deg = float(body.alt) * 180/np.pi
+                next_rising = self.observer.next_rising(body).datetime()
                 
-                # Only include positions above horizon
-                if alt_deg > 0:
-                    positions.append(Position(
-                        time=time.isoformat(),
-                        altitude=alt_deg,
-                        azimuth=float(body.az) * 180/np.pi
-                    ))
-            except (ephem.AlwaysUpError, ephem.NeverUpError):
-                continue
+            # Calculate only for times when object might be visible (1 hour before rise to 1 hour after set)
+            start_hour = max(0, (next_rising.hour - 1) % 24)
+            end_hour = min(24, (next_setting.hour + 1) % 24)
+            
+            if end_hour < start_hour:  # Handle overnight visibility
+                end_hour += 24
+                
+        except (ephem.AlwaysUpError, ephem.NeverUpError, AttributeError, ValueError):
+            # Fallback to calculating all 24 hours if we can't determine rise/set times
+            start_hour = 0
+            end_hour = 24
+        
+        # Calculate positions at 15-minute intervals, but only during likely visibility
+        minute_interval = 30  # Reduced from 15 to 30 minutes for better performance
+        
+        for hour in range(start_hour, end_hour):
+            actual_hour = hour % 24
+            for minute in range(0, 60, minute_interval):
+                time = date.replace(hour=actual_hour, minute=minute, second=0, microsecond=0)
+                self.observer.date = time
+                
+                try:
+                    body.compute(self.observer)
+                    alt_deg = float(body.alt) * 180/np.pi
+                    
+                    # Only include positions above horizon
+                    if alt_deg > 0:
+                        positions.append(Position(
+                            time=time.isoformat(),
+                            altitude=alt_deg,
+                            azimuth=float(body.az) * 180/np.pi
+                        ))
+                except (ephem.AlwaysUpError, ephem.NeverUpError):
+                    continue
+        
+        # Sort by time to ensure proper order
+        positions.sort(key=lambda p: p.time)
                 
         return positions
 
